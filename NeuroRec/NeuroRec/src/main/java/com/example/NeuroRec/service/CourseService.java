@@ -1,31 +1,37 @@
 package com.example.NeuroRec.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.example.NeuroRec.model.Course;
 import com.example.NeuroRec.repository.CourseRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CourseService {
 
-    private final CourseRepository productRepository;
+    private final CourseRepository repository;
 
-    public CourseService(CourseRepository productRepository) {
-        this.productRepository = productRepository;
+    public CourseService(CourseRepository repository) {
+        this.repository = repository;
     }
 
-    public List<Course> buscarCursos(String category, String typeFilter) {
-        if (typeFilter.contains("avalia")) {
-            return productRepository.findByCategoryOrderByPreviewDesc(category);
+    public List<Course> buscarCursos(String categoria, String intencao) {
+        System.out.println("Buscando cursos na categoria: " + categoria);
 
-        } else if (typeFilter.contains("preço") || typeFilter.contains("barato")) {
-            return productRepository.findByCategoryOrderByPriceAsc(category);
+        List<Course> cursos = repository.findByCategoryContainingIgnoreCase(categoria);
 
-        } else {
-            return productRepository.findByCategoryContainingIgnoreCase(category);
+        if (cursos.isEmpty()) {
+            System.out.println("Nenhum curso encontrado na categoria '" + categoria
+                    + "'. Tentando buscar por palavra-chave...");
 
         }
+
+        if (cursos.isEmpty()) {
+            System.out.println("Nenhum curso encontrado com base na intenção: " + intencao);
+        } else {
+            System.out.println("Oh" + cursos.size() + " curso(s) encontrado(s).");
+        }
+
+        return cursos;
     }
 }
