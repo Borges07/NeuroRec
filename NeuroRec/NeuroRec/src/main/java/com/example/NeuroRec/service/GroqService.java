@@ -12,6 +12,7 @@ import com.example.NeuroRec.model.Course;
 @Service
 public class GroqService {
 
+        // modicação só para salvar e n perder o projeto.
         private static final String GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
         private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
