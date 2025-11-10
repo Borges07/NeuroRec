@@ -1,0 +1,84 @@
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1.5rem;
+}
+
+.panel {
+  width: min(420px, 100%);
+  height: 640px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #0057ff, #00bfff);
+  color: #fff;
+  text-align: center;
+  padding: 1.6rem 1rem;
+}
+
+.header h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.chatArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 1.4rem;
+  overflow-y: auto;
+  gap: 0.5rem;
+  background: #f5f7fa;
+}
+
+.courseList {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.inputBar {
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem 1.4rem;
+  border-top: 1px solid #e2e6ef;
+  background: #fff;
+}
+
+.inputField {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid #d7dbe6;
+  background: #f1f3f6;
+  font-size: 0.95rem;
+}
+
+.sendButton {
+  padding: 0.85rem 1.4rem;
+  border-radius: 14px;
+  border: none;
+  background: #0057ff;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sendButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(0, 87, 255, 0.25);
+}
+
+@media (max-width: 480px) {
+  .panel {
+    height: 560px;
+  }
+}
