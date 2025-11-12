@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/chat")
@@ -28,23 +30,68 @@ public class ChatController {
         System.out.println("\n=== [Nova Requisição de Chat] ===");
         System.out.println("Mensagem recebida: " + request.getMessage());
 
-        String intencao = groqService.extrairIntencao(request.getMessage());
-        System.out.println("Intenção detectada pela IA: " + intencao);
+        // 1) Pede a intenção estruturada da IA
+        String intencaoEstruturada = groqService.extrairIntencao(request.getMessage());
+        System.out.println("Intenção (bruta) detectada pela IA: " + intencaoEstruturada);
 
-        String categoria = identificarCategoria(intencao);
-        System.out.println("Categoria detectada: " + categoria);
+        // 2) Parse da intenção: extrair categoria e filtro
+        String categoria = "Geral";
+        String filtro = "nenhum";
 
-        List<Course> cursos = courseService.buscarCursos(categoria, intencao);
+        // regex simples para capturar categoria e filtro (case-insensitive)
+        Pattern p = Pattern.compile("(?i)categoria\\s*=\\s*([^;]+)\\s*;\\s*filtro\\s*=\\s*(\\S+)");
+        Matcher m = p.matcher(intencaoEstruturada);
+        if (m.find()) {
+            categoria = m.group(1).trim();
+            filtro = m.group(2).trim().toLowerCase();
+            System.out.println("Parse OK -> categoria: " + categoria + ", filtro: " + filtro);
+        } else {
+            // fallback: tentar heurística local (se quiser)
+            System.err.println("Falha no parse da intenção estruturada; usando fallback heurístico.");
+            // usa identificarCategoria como fallback simples
+            categoria = identificarCategoria(request.getMessage());
+            filtro = request.getMessage().toLowerCase().contains("barato") ? "barato" : "nenhum";
+            System.out.println("Fallback -> categoria: " + categoria + ", filtro: " + filtro);
+        }
+
+        // 3) Monta um typeFilter compatível com o CourseService atual:
+        //    evita alterar CourseService — juntamos filtro + mensagem original
+        String typeFilter = filtro + " " + request.getMessage();
+        System.out.println("? Buscando cursos na categoria: " + categoria + " com filtro: " + filtro);
+
+        // 4) Busca no banco
+        List<Course> cursos = courseService.buscarCursos(categoria, typeFilter);
         System.out.println("Cursos encontrados: " + cursos.size());
 
+        // 5) Gera resposta natural via Groq (mesma lógica que já existia)
         String resposta = groqService.gerarRespostaNatural(cursos);
 
         System.out.println("Resposta final gerada com sucesso.\n");
         return new ChatResponse(resposta, cursos);
     }
 
+    /**
+     * Heurística local (fallback) para identificar categoria pelo texto bruto.
+     * Mantive a mesma lógica que você já usava (apenas como fallback).
+     */
     private String identificarCategoria(String intencao) {
-        String texto = intencao.toLowerCase();
+        String texto = intencao == null ? "" : intencao.toLowerCase();
+
+        // Data Science primeiro (python pode aparecer em ambos)
+        if (texto.contains("dados")
+                || texto.contains("data")
+                || texto.contains("machine learning")
+                || texto.contains("inteligência artificial")
+                || texto.contains("inteligencia artificial")
+                || texto.contains("ia")
+                || texto.contains("análise")
+                || texto.contains("analise")
+                || texto.contains("estatística")
+                || texto.contains("estatistica")
+                || texto.contains("pandas")
+                || texto.contains("python")) {
+            return "Data Science";
+        }
 
         if (texto.contains("programa")
                 || texto.contains("programação")
@@ -68,7 +115,6 @@ public class ChatController {
                 || texto.contains("fullstack")
                 || texto.contains("full-stack")
                 || texto.contains("java")
-                || texto.contains("python")
                 || texto.contains("javascript")
                 || texto.contains("js")
                 || texto.contains("node")
@@ -94,22 +140,6 @@ public class ChatController {
             return "Design";
         }
 
-        if (texto.contains("dados")
-                || texto.contains("data")
-                || texto.contains("machine learning")
-                || texto.contains("inteligência artificial")
-                || texto.contains("inteligencia artificial")
-                || texto.contains("ia")
-                || texto.contains("análise")
-                || texto.contains("analise")
-                || texto.contains("estatística")
-                || texto.contains("estatistica")
-                || texto.contains("pandas")
-                || texto.contains("python")) {
-            return "Data Science";
-        }
-
         return "geral";
     }
-
 }
