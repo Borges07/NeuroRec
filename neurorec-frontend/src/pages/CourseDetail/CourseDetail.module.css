@@ -1,0 +1,235 @@
+.page {
+  min-height: 100vh;
+  padding: 4rem 6% 5rem;
+  background: linear-gradient(150deg, #f3fbf7, #ffffff);
+  display: grid;
+  gap: 2.4rem;
+}
+
+.header {
+  background: #ffffff;
+  border: 1px solid rgba(57, 159, 146, 0.16);
+  border-radius: 20px;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  box-shadow: 0 24px 40px rgba(0, 0, 0, 0.07);
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 0.4rem;
+  color: #2f6160;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.breadcrumb a {
+  color: #399f92;
+  text-decoration: none;
+}
+
+.kicker {
+  font-weight: 700;
+  color: #399f92;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header h1 {
+  margin: 0.4rem 0;
+  font-size: clamp(2rem, 2vw + 1rem, 2.6rem);
+  color: #1d1f2f;
+}
+
+.lead {
+  color: #3d4455;
+  line-height: 1.6;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  color: #2f6160;
+  font-weight: 700;
+}
+
+.price {
+  background: rgba(57, 159, 146, 0.1);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 159, 146, 0.2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.primary,
+.secondary {
+  padding: 0.85rem 1.4rem;
+  border-radius: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease;
+}
+
+.primary {
+  background: linear-gradient(135deg, #399f92, #2a7f72);
+  color: #ffffff;
+  box-shadow: 0 16px 28px rgba(57, 159, 146, 0.3);
+}
+
+.secondary {
+  background: rgba(57, 159, 146, 0.08);
+  color: #2f6160;
+  border: 1px solid rgba(57, 159, 146, 0.2);
+}
+
+.primary:hover,
+.secondary:hover {
+  transform: translateY(-1px);
+}
+
+.section {
+  background: #ffffff;
+  border: 1px solid rgba(57, 159, 146, 0.15);
+  border-radius: 16px;
+  padding: 1.6rem;
+  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.06);
+}
+
+.section h2 {
+  margin-bottom: 1rem;
+  color: #1d1f2f;
+}
+
+.syllabus {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.syllabus li {
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(57, 159, 146, 0.18);
+  border-radius: 12px;
+  background: rgba(57, 159, 146, 0.04);
+  color: #2f6160;
+  font-weight: 700;
+}
+
+.highlightGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.highlightCard {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(57, 159, 146, 0.18);
+  background: rgba(57, 159, 146, 0.06);
+  color: #2f6160;
+  font-weight: 700;
+}
+
+.relatedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.relatedHeader a {
+  color: #399f92;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.relatedCard {
+  border: 1px solid rgba(57, 159, 146, 0.15);
+  border-radius: 12px;
+  padding: 1.1rem;
+  background: #ffffff;
+  display: grid;
+  gap: 0.5rem;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.05);
+}
+
+.relatedCategory {
+  font-weight: 700;
+  color: #399f92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.relatedDesc {
+  color: #3d4455;
+}
+
+.relatedMeta {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  color: #2f6160;
+  font-weight: 700;
+}
+
+.relatedLink {
+  text-decoration: none;
+  color: #2f6160;
+  font-weight: 800;
+}
+
+.notFound {
+  background: #ffffff;
+  border: 1px solid rgba(57, 159, 146, 0.16);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.08);
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 10px;
+  background: #399f92;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 3rem 5% 4rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .relatedHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
