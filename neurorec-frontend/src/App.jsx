@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/Layout/AppLayout.jsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
 import { Chat } from "./pages/Chat/Chat.jsx";
+import { CourseDetail } from "./pages/CourseDetail/CourseDetail.jsx";
 import { Home } from "./pages/Home/Home.jsx";
 import { Login } from "./pages/Login/Login.jsx";
 import { Register } from "./pages/Register/Register.jsx";
@@ -11,6 +12,7 @@ function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<Home />} />
+        <Route path="courses/:courseId" element={<CourseDetail />} />
         <Route element={<ProtectedRoute />}>
           <Route path="chat" element={<Chat />} />
         </Route>
