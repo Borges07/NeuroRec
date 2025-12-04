@@ -29,7 +29,7 @@ public class CourseService {
         if (cursos.isEmpty()) {
             System.out.println("Nenhum curso encontrado com base na intenção: " + intencao);
         } else {
-            System.out.println("Oh" + cursos.size() + " curso(s) encontrado(s).");
+            System.out.println("Oh " + cursos.size() + " curso(s) encontrado(s).");
         }
 
         return cursos;
