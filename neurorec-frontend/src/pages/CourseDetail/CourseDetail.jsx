@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { categories, courses, findCourseById } from "../../data/courses.js";
+import { useCart } from "../../hooks/useCart.js";
 import styles from "./CourseDetail.module.css";
 
 export function CourseDetail() {
   const { courseId } = useParams();
+  const { addToCart, cart } = useCart();
   const course = useMemo(() => findCourseById(courseId), [courseId]);
   const categoryLabel = useMemo(
     () =>
@@ -60,6 +62,14 @@ export function CourseDetail() {
           <Link className={styles.primary} to="/chat">
             Perguntar no chat NeuroRec
           </Link>
+          <button
+            type="button"
+            className={styles.addCart}
+            onClick={() => addToCart(course.id)}
+            disabled={cart.includes(course.id)}
+          >
+            {cart.includes(course.id) ? "No carrinho" : "Adicionar ao carrinho"}
+          </button>
           <a className={styles.secondary} href="#conteudo">
             Ver conteúdo do curso
           </a>

@@ -39,6 +39,36 @@ export function SiteHeader() {
           Home
         </NavLink>
         <NavLink
+          to="/my-courses"
+          className={({ isActive }) =>
+            isActive
+              ? `${styles.navLink} ${styles.navLinkActive}`
+              : styles.navLink
+          }
+        >
+          Meus cursos
+        </NavLink>
+        <NavLink
+          to="/cart"
+          className={({ isActive }) =>
+            isActive
+              ? `${styles.navLink} ${styles.navLinkActive}`
+              : styles.navLink
+          }
+        >
+          Carrinho
+        </NavLink>
+        <NavLink
+          to="/admin/courses"
+          className={({ isActive }) =>
+            isActive
+              ? `${styles.navLink} ${styles.navLinkActive}`
+              : styles.navLink
+          }
+        >
+          Admin
+        </NavLink>
+        <NavLink
           to="/chat"
           className={({ isActive }) =>
             isActive
