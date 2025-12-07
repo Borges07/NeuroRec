@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { categories, courses } from "../../data/courses.js";
+import { useCart } from "../../hooks/useCart.js";
 import styles from "./Home.module.css";
 
 const allCategoryId = "all";
 
 export function Home() {
+  const { addToCart, cart } = useCart();
   const [activeCategory, setActiveCategory] = useState(allCategoryId);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -115,20 +117,16 @@ export function Home() {
         </header>
 
         <div className={styles.filters}>
-          {[allCategoryId, ...categories.map((item) => item.id)].map((id) => {
-            const label =
-              id === allCategoryId
-                ? "Todos"
-                : categories.find((item) => item.id === id)?.label ?? id;
-            const isActive = id === activeCategory;
+          {categories.map((item) => {
+            const isActive = item.id === activeCategory;
             return (
               <button
-                key={id}
+                key={item.id}
                 type="button"
                 className={isActive ? styles.filterActive : styles.filter}
-                onClick={() => setActiveCategory(id)}
+                onClick={() => setActiveCategory(item.id)}
               >
-                {label}
+                {item.label}
               </button>
             );
           })}
@@ -177,6 +175,16 @@ export function Home() {
                   >
                     Ver conteúdo
                   </Link>
+                  <button
+                    type="button"
+                    className={styles.cartBtn}
+                    onClick={() => addToCart(course.id)}
+                    disabled={cart.includes(course.id)}
+                  >
+                    {cart.includes(course.id)
+                      ? "No carrinho"
+                      : "Adicionar ao carrinho"}
+                  </button>
                 </div>
               </article>
             ))

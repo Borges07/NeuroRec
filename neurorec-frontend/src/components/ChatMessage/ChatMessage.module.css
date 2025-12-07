@@ -1,19 +1,23 @@
 .message {
-  max-width: 80%;
-  padding: 0.75rem 1rem;
-  border-radius: 16px;
-  margin-bottom: 0.75rem;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  max-width: 82%;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  margin-bottom: 0.5rem;
+  font-size: 0.96rem;
+  line-height: 1.45;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(2px);
 }
 
 .bot {
   align-self: flex-start;
-  background: #e1ecff;
+  background: linear-gradient(145deg, #eaf6f3, #ffffff);
+  color: #1d1f2f;
 }
 
 .user {
   align-self: flex-end;
-  background: #c7f5d9;
+  background: linear-gradient(145deg, #2a7f72, #399f92);
+  color: #ffffff;
 }

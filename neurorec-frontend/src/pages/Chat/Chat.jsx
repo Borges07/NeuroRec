@@ -69,6 +69,9 @@ export function Chat() {
       <section className={styles.panel}>
         <header className={styles.header}>
           <h1>Recomendador de Cursos IA 💡</h1>
+          <p className={styles.headerSubtitle}>
+            Fale com a IA da NeuroRec para descobrir cursos e trilhas no seu ritmo.
+          </p>
         </header>
 
         <div className={styles.chatArea}>
