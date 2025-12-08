@@ -51,7 +51,7 @@ jobs:
         run: npm run build
         working-directory: neurorec-frontend
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:8080' }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
