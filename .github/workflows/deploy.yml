@@ -27,7 +27,7 @@ jobs:
           context: .
           file: NeuroRec/NeuroRec/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/neurorec-backend:latest
+          tags: ghcr.io/${{ toLower(github.repository_owner) || 'borges07' }}/neurorec-backend:latest
 
   frontend-pages:
     runs-on: ubuntu-latest
