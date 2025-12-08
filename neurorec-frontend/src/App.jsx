@@ -19,8 +19,6 @@ function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Home />} />
         <Route path="courses/:courseId" element={<CourseDetail />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="my-courses" element={<MyCourses />} />
         <Route element={<AdminRoute />}>
           <Route path="admin/courses" element={<AdminCoursesList />} />
           <Route path="admin/courses/new" element={<AdminCourseForm />} />
@@ -28,6 +26,8 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="chat" element={<Chat />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="my-courses" element={<MyCourses />} />
           <Route path="courses" element={<Courses />} />
         </Route>
       </Route>
