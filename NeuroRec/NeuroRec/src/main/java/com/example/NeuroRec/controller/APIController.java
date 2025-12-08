@@ -47,11 +47,20 @@ public class APIController {
         User user = userService.authenticateUser(usernameOrEmail, password);
 
         if (user != null) {
-            String token = jwtService.generateToken(user.getUserName());
+            boolean isAdmin = userService.isAdminUser(user);
+            String role = isAdmin ? "ADMIN" : "USER";
+
+            String token = jwtService.generateToken(user.getUserName(), role);
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "message", "Login realizado com sucesso!",
-                    "token", token
+                    "token", token,
+                    "user", Map.of(
+                            "userName", user.getUserName(),
+                            "email", user.getEmail(),
+                            "nome", user.getNome(),
+                            "role", role
+                    )
             ));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

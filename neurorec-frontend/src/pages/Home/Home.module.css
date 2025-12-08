@@ -290,6 +290,7 @@
 }
 
 .detailLink,
+.cartBtn,
 .chatLink {
   padding: 0.75rem 1rem;
   border-radius: 12px;
@@ -300,13 +301,26 @@
   justify-content: center;
   flex: 1;
   min-width: 140px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease;
 }
 
 .detailLink {
   background: linear-gradient(135deg, #399f92, #2a7f72);
   color: #ffffff;
   box-shadow: 0 16px 26px rgba(57, 159, 146, 0.24);
+}
+
+.cartBtn {
+  border: 1px solid rgba(57, 159, 146, 0.25);
+  background: rgba(57, 159, 146, 0.08);
+  color: #2f6160;
+  cursor: pointer;
+}
+
+.cartBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .chatLink {
@@ -316,6 +330,7 @@
 }
 
 .detailLink:hover,
+.cartBtn:not(:disabled):hover,
 .chatLink:hover {
   transform: translateY(-1px);
 }

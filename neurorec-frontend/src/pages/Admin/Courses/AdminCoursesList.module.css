@@ -1,0 +1,133 @@
+.page {
+  min-height: 100vh;
+  padding: 3.5rem 6% 4rem;
+  background: linear-gradient(150deg, #f4fbf9, #ffffff);
+  display: grid;
+  gap: 1.2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.kicker {
+  color: #399f92;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  color: #3d4455;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.headerActions button {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(57, 159, 146, 0.2);
+  background: rgba(57, 159, 146, 0.08);
+  color: #2f6160;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.error {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 92, 92, 0.1);
+  color: #a13232;
+  border: 1px solid rgba(255, 92, 92, 0.2);
+}
+
+.empty {
+  background: rgba(57, 159, 146, 0.06);
+  border: 1px dashed rgba(57, 159, 146, 0.25);
+  border-radius: 14px;
+  padding: 2rem;
+  text-align: center;
+  color: #2f6160;
+}
+
+.table {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(57, 159, 146, 0.18);
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.tableHead,
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 0.8rem;
+  padding: 0.9rem 1rem;
+  align-items: center;
+}
+
+.tableHead {
+  background: rgba(57, 159, 146, 0.08);
+  font-weight: 800;
+  color: #2f6160;
+}
+
+.row:nth-child(odd) {
+  background: rgba(57, 159, 146, 0.03);
+}
+
+.desc {
+  color: #3d4455;
+  margin-top: 0.15rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.actions a,
+.actions button {
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(57, 159, 146, 0.2);
+  background: rgba(57, 159, 146, 0.08);
+  color: #2f6160;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .tableHead,
+  .row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .row span:nth-of-type(2),
+  .row span:nth-of-type(3),
+  .tableHead span:nth-of-type(2),
+  .tableHead span:nth-of-type(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .tableHead {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+}

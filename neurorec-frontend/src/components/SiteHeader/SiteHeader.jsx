@@ -5,7 +5,7 @@ import styles from "./SiteHeader.module.css";
 
 export function SiteHeader() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
 
   const displayName = useMemo(() => {
     if (!user) return "Visitante";
@@ -38,6 +38,38 @@ export function SiteHeader() {
         >
           Home
         </NavLink>
+        <NavLink
+          to="/my-courses"
+          className={({ isActive }) =>
+            isActive
+              ? `${styles.navLink} ${styles.navLinkActive}`
+              : styles.navLink
+          }
+        >
+          Meus cursos
+        </NavLink>
+        <NavLink
+          to="/cart"
+          className={({ isActive }) =>
+            isActive
+              ? `${styles.navLink} ${styles.navLinkActive}`
+              : styles.navLink
+          }
+        >
+          Carrinho
+        </NavLink>
+        {isAdmin && (
+          <NavLink
+            to="/admin/courses"
+            className={({ isActive }) =>
+              isActive
+                ? `${styles.navLink} ${styles.navLinkActive}`
+                : styles.navLink
+            }
+          >
+            Admin
+          </NavLink>
+        )}
         <NavLink
           to="/chat"
           className={({ isActive }) =>

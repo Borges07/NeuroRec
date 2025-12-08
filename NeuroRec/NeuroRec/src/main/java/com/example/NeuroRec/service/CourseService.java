@@ -5,6 +5,7 @@ import com.example.NeuroRec.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -33,5 +34,37 @@ public class CourseService {
         }
 
         return cursos;
+    }
+
+    public List<Course> listAll() {
+        return repository.findAll();
+    }
+
+    public Optional<Course> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public Course create(Course course) {
+        course.setId(null);
+        return repository.save(course);
+    }
+
+    public Optional<Course> update(Long id, Course payload) {
+        return repository.findById(id).map(existing -> {
+            existing.setName(payload.getName());
+            existing.setCategory(payload.getCategory());
+            existing.setDescription(payload.getDescription());
+            existing.setPrice(payload.getPrice());
+            existing.setPreview(payload.getPreview());
+            return repository.save(existing);
+        });
+    }
+
+    public boolean delete(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

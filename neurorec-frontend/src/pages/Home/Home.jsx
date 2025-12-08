@@ -1,44 +1,93 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { categories, courses } from "../../data/courses.js";
+import { categories as seedCategories } from "../../data/courses.js";
+import { useCart } from "../../hooks/useCart.js";
+import { fetchCourses } from "../../services/courseService.js";
 import styles from "./Home.module.css";
 
 const allCategoryId = "all";
 
 export function Home() {
+  const { addToCart, cart } = useCart();
   const [activeCategory, setActiveCategory] = useState(allCategoryId);
   const [searchTerm, setSearchTerm] = useState("");
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const data = await fetchCourses();
+
+        console.log("Cursos normalizados:", data);
+
+        setCourses(data);
+      } catch (err) {
+        console.error("Erro ao carregar cursos do backend:", err);
+        setError("Não foi possível carregar do servidor.");
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
 
   const filteredCourses = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
+  const term = searchTerm.trim().toLowerCase();
 
-    return courses.filter((course) => {
-      const matchCategory =
-        activeCategory === allCategoryId || course.category === activeCategory;
-      const haystack = `${course.title} ${course.description} ${course.level}`
-        .toLowerCase()
-        .replaceAll("ç", "c")
-        .replaceAll("ã", "a")
-        .replaceAll("õ", "o")
-        .replaceAll("á", "a")
-        .replaceAll("é", "e")
-        .replaceAll("í", "i")
-        .replaceAll("ó", "o")
-        .replaceAll("ú", "u");
-      const needle = term
-        .replaceAll("ç", "c")
-        .replaceAll("ã", "a")
-        .replaceAll("õ", "o")
-        .replaceAll("á", "a")
-        .replaceAll("é", "e")
-        .replaceAll("í", "i")
-        .replaceAll("ó", "o")
-        .replaceAll("ú", "u");
+  // debug rápido — remova quando confirmar que roda
+  // console.log("DEBUG: recalculando filteredCourses — courses:", courses.length, "activeCategory:", activeCategory, "term:", term);
 
-      if (!needle) return matchCategory;
-      return matchCategory && haystack.includes(needle);
-    });
-  }, [activeCategory, searchTerm]);
+  return courses.filter((course) => {
+    const matchCategory =
+      activeCategory === allCategoryId || course.category === activeCategory;
+
+    // garanto que title/description/level são strings (seguro mesmo sem normalizar)
+    const title = String(course.title ?? "");
+    const description = String(course.description ?? "");
+    const level = String(course.level ?? "");
+
+    const haystack = `${title} ${description} ${level}`
+      .toLowerCase()
+      .replaceAll("ç", "c")
+      .replaceAll("ã", "a")
+      .replaceAll("õ", "o")
+      .replaceAll("á", "a")
+      .replaceAll("é", "e")
+      .replaceAll("í", "i")
+      .replaceAll("ó", "o")
+      .replaceAll("ú", "u");
+
+    const needle = term
+      .replaceAll("ç", "c")
+      .replaceAll("ã", "a")
+      .replaceAll("õ", "o")
+      .replaceAll("á", "a")
+      .replaceAll("é", "e")
+      .replaceAll("í", "i")
+      .replaceAll("ó", "o")
+      .replaceAll("ú", "u");
+
+    if (!needle) return matchCategory;
+    return matchCategory && haystack.includes(needle);
+  });
+}, [activeCategory, searchTerm, courses]);
+
+
+  const categories = useMemo(() => {
+    const dynamic = Array.from(
+      new Set(courses.map((course) => course.category).filter(Boolean))
+    ).map((id) => ({
+      id,
+      label: seedCategories.find((item) => item.id === id)?.label ?? id,
+    }));
+    return [{ id: allCategoryId, label: "Todos" }, ...dynamic];
+  }, [courses]);
 
   const getCategoryLabel = (id) =>
     categories.find((item) => item.id === id)?.label ?? id;
@@ -115,27 +164,27 @@ export function Home() {
         </header>
 
         <div className={styles.filters}>
-          {[allCategoryId, ...categories.map((item) => item.id)].map((id) => {
-            const label =
-              id === allCategoryId
-                ? "Todos"
-                : categories.find((item) => item.id === id)?.label ?? id;
-            const isActive = id === activeCategory;
+          {categories.map((item) => {
+            const isActive = item.id === activeCategory;
             return (
               <button
-                key={id}
+                key={item.id}
                 type="button"
                 className={isActive ? styles.filterActive : styles.filter}
-                onClick={() => setActiveCategory(id)}
+                onClick={() => setActiveCategory(item.id)}
               >
-                {label}
+                {item.label}
               </button>
             );
           })}
         </div>
 
+        {error && <div className={styles.error}>{error}</div>}
+
         <div className={styles.grid}>
-          {filteredCourses.length === 0 ? (
+          {loading ? (
+            <div className={styles.empty}>Carregando catálogo...</div>
+          ) : filteredCourses.length === 0 ? (
             <div className={styles.empty}>
               <h3>Nenhum curso encontrado</h3>
               <p>
@@ -159,15 +208,20 @@ export function Home() {
                 <p className={styles.description}>{course.description}</p>
 
                 <ul className={styles.highlights}>
-                  {course.highlights.slice(0, 2).map((item) => (
+                  {/* atila aqui {course.highlights.slice(0, 2).map((item) => ( */}
+                  {/* meu aqui BG */}
+                  {(course.highlights || []).slice(0, 2).map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
 
                 <div className={styles.meta}>
                   <span>{course.level}</span>
-                  <span>{course.duration}</span>
-                  <span>⭐ {course.rating.toFixed(1)}</span>
+                  {/*<span>{course.duration}</span> do atila aqui*/}
+                  {/* meu aqui */}
+                  <span>{course.duration || "Sem duração"}</span>
+
+                  <span>⭐ {(course.rating ?? 0).toFixed(1)}</span>
                 </div>
 
                 <div className={styles.cardActions}>
@@ -177,6 +231,16 @@ export function Home() {
                   >
                     Ver conteúdo
                   </Link>
+                  <button
+                    type="button"
+                    className={styles.cartBtn}
+                    onClick={() => addToCart(course.id)}
+                    disabled={cart.includes(course.id)}
+                  >
+                    {cart.includes(course.id)
+                      ? "No carrinho"
+                      : "Adicionar ao carrinho"}
+                  </button>
                 </div>
               </article>
             ))
@@ -189,8 +253,8 @@ export function Home() {
           <p className={styles.kicker}>Suporte</p>
           <h2>Precisa de ajuda?</h2>
           <p className={styles.subtitle}>
-            Fale com a equipe NeuroRec para suporte, parceria ou dúvidas sobre
-            o catálogo.
+            Fale com a equipe NeuroRec para suporte, parceria ou dúvidas sobre o
+            catálogo.
           </p>
         </div>
         <div className={styles.contactInfo}>

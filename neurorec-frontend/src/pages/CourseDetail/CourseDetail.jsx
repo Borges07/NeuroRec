@@ -1,25 +1,45 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { categories, courses, findCourseById } from "../../data/courses.js";
+import { categories as seedCategories } from "../../data/courses.js";
+import { fetchCourseById, fetchCourses } from "../../services/courseService.js";
+import { useCart } from "../../hooks/useCart.js";
 import styles from "./CourseDetail.module.css";
 
 export function CourseDetail() {
   const { courseId } = useParams();
-  const course = useMemo(() => findCourseById(courseId), [courseId]);
+  const { addToCart, cart } = useCart();
+  const [course, setCourse] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      setError("");
+      try {
+        const [courseData, list] = await Promise.all([
+          fetchCourseById(courseId),
+          fetchCourses(),
+        ]);
+        setCourse(courseData);
+        const relatedCourses = list
+          .filter(
+            (item) => item.category === courseData?.category && item.id !== courseData?.id
+          )
+          .slice(0, 3);
+        setRelated(relatedCourses);
+      } catch (err) {
+        console.error("Erro ao carregar curso:", err);
+        setError("Não foi possível carregar os detalhes do curso.");
+      }
+    };
+
+    load();
+  }, [courseId]);
+
   const categoryLabel = useMemo(
     () =>
-      categories.find((item) => item.id === course?.category)?.label ??
+      seedCategories.find((item) => item.id === course?.category)?.label ??
       course?.category,
-    [course]
-  );
-
-  const related = useMemo(
-    () =>
-      courses
-        .filter(
-          (item) => item.category === course?.category && item.id !== course?.id
-        )
-        .slice(0, 3),
     [course]
   );
 
@@ -27,7 +47,7 @@ export function CourseDetail() {
     return (
       <div className={styles.page}>
         <div className={styles.notFound}>
-          <h1>Curso não encontrado</h1>
+          <h1>{error || "Curso não encontrado"}</h1>
           <p>Volte para o catálogo e escolha outro conteúdo.</p>
           <Link to="/" className={styles.backLink}>
             Voltar para os cursos
@@ -60,6 +80,14 @@ export function CourseDetail() {
           <Link className={styles.primary} to="/chat">
             Perguntar no chat NeuroRec
           </Link>
+          <button
+            type="button"
+            className={styles.addCart}
+            onClick={() => addToCart(course.id)}
+            disabled={cart.includes(course.id)}
+          >
+            {cart.includes(course.id) ? "No carrinho" : "Adicionar ao carrinho"}
+          </button>
           <a className={styles.secondary} href="#conteudo">
             Ver conteúdo do curso
           </a>
