@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
-import { courses } from "../data/courses.js";
+import { fetchCourses } from "../services/courseService.js";
 
 const CART_KEY = "neurorec_cart";
 const MY_COURSES_KEY = "neurorec_my_courses";
@@ -7,6 +7,9 @@ const MY_COURSES_KEY = "neurorec_my_courses";
 export const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
+  const [catalog, setCatalog] = useState([]);
+  const [catalogError, setCatalogError] = useState("");
+
   const [cart, setCart] = useState(() => {
     try {
       const saved = localStorage.getItem(CART_KEY);
@@ -35,6 +38,25 @@ export function CartProvider({ children }) {
     localStorage.setItem(MY_COURSES_KEY, JSON.stringify(myCourses));
   }, [myCourses]);
 
+  useEffect(() => {
+    const load = async () => {
+      setCatalogError("");
+      try {
+        const data = await fetchCourses();
+        setCatalog(Array.isArray(data) ? data : []);
+        if (!data || data.length === 0) {
+          setCatalogError("Catálogo vazio no servidor.");
+        }
+      } catch (err) {
+        console.error("Erro ao carregar catálogo:", err);
+        setCatalog([]);
+        setCatalogError("Não foi possível sincronizar o catálogo com o servidor.");
+      }
+    };
+
+    load();
+  }, []);
+
   const addToCart = useCallback((courseId) => {
     setCart((prev) => {
       if (prev.includes(courseId)) return prev;
@@ -54,13 +76,13 @@ export function CartProvider({ children }) {
   }, [cart]);
 
   const cartCourses = useMemo(
-    () => cart.map((id) => courses.find((course) => course.id === id)).filter(Boolean),
-    [cart]
+    () => cart.map((id) => catalog.find((course) => course.id === id)).filter(Boolean),
+    [cart, catalog]
   );
 
   const myCoursesList = useMemo(
-    () => myCourses.map((id) => courses.find((course) => course.id === id)).filter(Boolean),
-    [myCourses]
+    () => myCourses.map((id) => catalog.find((course) => course.id === id)).filter(Boolean),
+    [myCourses, catalog]
   );
 
   const value = useMemo(
@@ -69,6 +91,8 @@ export function CartProvider({ children }) {
       myCourses,
       cartCourses,
       myCoursesList,
+      catalog,
+      catalogError,
       addToCart,
       removeFromCart,
       clearCart,
@@ -79,6 +103,8 @@ export function CartProvider({ children }) {
       myCourses,
       cartCourses,
       myCoursesList,
+      catalog,
+      catalogError,
       addToCart,
       removeFromCart,
       clearCart,

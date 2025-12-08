@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { courses as seedCourses } from "../../../data/courses.js";
-import {
-  bootstrapCourses,
-  deleteCourse,
-  listCourses,
-} from "../../../services/adminCourseService.js";
+import { deleteCourse, listCourses } from "../../../services/adminCourseService.js";
 import styles from "./AdminCoursesList.module.css";
 
 export function AdminCoursesList() {
@@ -15,7 +10,6 @@ export function AdminCoursesList() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    bootstrapCourses(seedCourses);
     load();
   }, []);
 
@@ -73,18 +67,18 @@ export function AdminCoursesList() {
             <span>Título</span>
             <span>Categoria</span>
             <span>Preço</span>
-            <span>Nível</span>
+            <span>Preview</span>
             <span>Ações</span>
           </div>
           {courses.map((course) => (
             <div key={course.id} className={styles.row}>
               <div>
-                <strong>{course.title}</strong>
+                <strong>{course.name}</strong>
                 <p className={styles.desc}>{course.description}</p>
               </div>
               <span>{course.category}</span>
               <span>R${Number(course.price ?? 0).toFixed(2)}</span>
-              <span>{course.level}</span>
+              <span>{course.preview}</span>
               <div className={styles.actions}>
                 <Link to={`/admin/courses/${course.id}/edit`}>Editar</Link>
                 <button type="button" onClick={() => handleDelete(course.id)}>

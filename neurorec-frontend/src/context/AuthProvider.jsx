@@ -39,6 +39,8 @@ export function AuthProvider({ children }) {
       const nextUser = {
         userName: response.user?.userName ?? credentials.usernameOrEmail,
         email: response.user?.email ?? null,
+        nome: response.user?.nome ?? null,
+        role: response.user?.role ?? "USER",
       };
 
       setToken(nextToken);
@@ -63,6 +65,7 @@ export function AuthProvider({ children }) {
       token,
       user,
       isAuthenticated: Boolean(token),
+      isAdmin: (user?.role ?? "USER").toUpperCase() === "ADMIN",
       login,
       logout,
       register,
