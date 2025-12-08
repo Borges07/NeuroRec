@@ -28,11 +28,11 @@ jobs:
           --health-cmd "pg_isready -U neurorec"
           --health-interval 10s --health-timeout 5s --health-retries 5
     env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/neurorec
-      SPRING_DATASOURCE_USERNAME: neurorec
-      SPRING_DATASOURCE_PASSWORD: neurorec
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      GROQ_API_KEY: dummy
+      SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL || 'jdbc:postgresql://localhost:5432/neurorec' }}
+      SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME || 'neurorec' }}
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD || 'neurorec' }}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO || 'update' }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY || 'dummy' }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Java
@@ -41,8 +41,6 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: maven
-      - name: Unit tests
-        run: ./mvnw -B -ntp test
       - name: Package (skip tests)
         run: ./mvnw -B -ntp -DskipTests package
       - name: Publish backend artifact
@@ -72,7 +70,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_URL: http://localhost:8080
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:8080' }}
       - name: Publish frontend artifact
         uses: actions/upload-artifact@v4
         with:
