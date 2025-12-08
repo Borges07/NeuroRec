@@ -22,7 +22,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> {}) // Aqui man habilita o CORS global do WebConfig
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // e aqui libera preflight (CORREÇÃO)
                         .requestMatchers("/user/register", "/user/login", "/chat/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/courses/**").permitAll()
                         .anyRequest().authenticated())

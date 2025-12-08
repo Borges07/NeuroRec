@@ -13,10 +13,10 @@ const normalizeCourse = (course) => {
   const highlights = Array.isArray(course.highlights)
     ? course.highlights
     : description
-        .split(".")
-        .map((item) => item.trim())
-        .filter(Boolean)
-        .slice(0, 3);
+      .split(".")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, 3);
 
   const syllabus = Array.isArray(course.syllabus)
     ? course.syllabus
@@ -36,11 +36,33 @@ const normalizeCourse = (course) => {
   };
 };
 
+// export async function fetchCourses() {
+//   const { data } = await api.get("/courses");
+//   const normalized = Array.isArray(data)
+//     ? data.map(normalizeCourse).filter(Boolean)
+//     : [];
+
+//   return normalized;
+// }
+
 export async function fetchCourses() {
-  const { data } = await api.get("/courses");
-  const normalized = Array.isArray(data)
-    ? data.map(normalizeCourse).filter(Boolean)
-    : [];
+  const response = await fetch("http://localhost:8080/courses");
+  const raw = await response.json();
+
+  // NORMALIZAÇÃO
+  const normalized = raw.map((course) => ({
+    id: course.id,
+    title: course.name || "Sem título",
+    description: course.description || "Sem descrição",
+    category: course.category || "Geral",
+    price: Number(course.price) || 0,
+
+    // Campos que ainda NÃO existem no banco
+    duration: course.duration || "",  // vazio por enquanto
+    level: course.level || "Livre",   // padrão
+    rating: course.rating || 5,       // default
+    highlights: course.highlights || [], // array sempre
+  }));
 
   return normalized;
 }
