@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/chat")
-@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:5173"})
+@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:5173" })
 public class ChatController {
 
     private final GroqService groqService;
@@ -54,8 +54,19 @@ public class ChatController {
             System.out.println("Fallback -> categoria: " + categoria + ", filtro: " + filtro);
         }
 
+        // 2.5) Se a IA disse que é conversa aleatória → NÃO buscar cursos
+        if (categoria.equalsIgnoreCase("Geral") && filtro.equalsIgnoreCase("nenhum")) {
+            System.out.println("Mensagem não relacionada a cursos. Respondendo aviso amigável.");
+
+            return new ChatResponse(
+                "Essa mensagem não parece estar relacionada à recomendação de cursos. "
+                        + "Tente perguntar sobre cursos ou áreas de aprendizado.",
+                List.of() // lista de cursos vazia
+            );
+        }
+
         // 3) Monta um typeFilter compatível com o CourseService atual:
-        //    evita alterar CourseService — juntamos filtro + mensagem original
+        // evita alterar CourseService — juntamos filtro + mensagem original
         String typeFilter = filtro + " " + request.getMessage();
         System.out.println("? Buscando cursos na categoria: " + categoria + " com filtro: " + filtro);
 
@@ -138,6 +149,20 @@ public class ChatController {
                 || texto.contains("prototipagem")
                 || texto.contains("criativo")) {
             return "Design";
+        }
+
+        if (texto.contains("cyber")
+                || texto.contains("segurança")
+                || texto.contains("seguranca")
+                || texto.contains("hacking")
+                || texto.contains("hack")
+                || texto.contains("malware")
+                || texto.contains("phishing")
+                || texto.contains("criptografia")
+                || texto.contains("firewall")
+                || texto.contains("pentest")
+                || texto.contains("pentesting")) {
+            return "Cybersecurity";
         }
 
         return "geral";

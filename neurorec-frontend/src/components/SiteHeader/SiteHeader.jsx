@@ -80,6 +80,18 @@ export function SiteHeader() {
         >
           Chat
         </NavLink>
+
+        <NavLink
+          to="/Courses"
+          end
+          className={({ isActive }) =>
+            isActive
+              ? `${styles.navLink} ${styles.navLinkActive}`
+              : styles.navLink
+          }
+        >
+          cursos
+        </NavLink>
       </nav>
 
       <div className={styles.actions}>

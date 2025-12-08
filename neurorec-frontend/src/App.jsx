@@ -10,6 +10,7 @@ import { AdminCoursesList } from "./pages/Admin/Courses/AdminCoursesList.jsx";
 import { AdminCourseForm } from "./pages/Admin/Courses/AdminCourseForm.jsx";
 import { Login } from "./pages/Login/Login.jsx";
 import { Register } from "./pages/Register/Register.jsx";
+import { Courses } from "./pages/Courses/Courses.jsx";
 import { Cart } from "./pages/Cart/Cart.jsx";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="chat" element={<Chat />} />
+          <Route path="courses" element={<Courses />} />
         </Route>
       </Route>
 
