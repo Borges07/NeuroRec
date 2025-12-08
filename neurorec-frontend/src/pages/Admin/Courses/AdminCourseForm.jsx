@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { courses as seedCourses, categories } from "../../../data/courses.js";
+import { categories } from "../../../data/courses.js";
 import {
-  bootstrapCourses,
   createCourse,
   getCourseById,
   updateCourse,
@@ -10,15 +9,11 @@ import {
 import styles from "./AdminCourseForm.module.css";
 
 const initialState = {
-  title: "",
+  name: "",
   category: categories[0]?.id ?? "",
   description: "",
-  duration: "",
-  level: "",
   price: 0,
-  rating: 4.0,
-  highlights: "",
-  syllabus: "",
+  preview: 0,
 };
 
 export function AdminCourseForm() {
@@ -30,7 +25,6 @@ export function AdminCourseForm() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    bootstrapCourses(seedCourses);
     if (isEditing) {
       loadCourse();
     }
@@ -43,9 +37,11 @@ export function AdminCourseForm() {
       return;
     }
     setForm({
-      ...data,
-      highlights: (data.highlights || []).join("\n"),
-      syllabus: (data.syllabus || []).join("\n"),
+      name: data.name ?? "",
+      category: data.category ?? "",
+      description: data.description ?? "",
+      price: data.price ?? 0,
+      preview: data.preview ?? 0,
     });
   };
 
@@ -59,21 +55,11 @@ export function AdminCourseForm() {
     setError("");
 
     const payload = {
-      title: form.title,
+      name: form.name,
       category: form.category,
       description: form.description,
-      duration: form.duration,
-      level: form.level,
       price: Number(form.price) || 0,
-      rating: Number(form.rating) || 0,
-      highlights: form.highlights
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean),
-      syllabus: form.syllabus
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean),
+      preview: Number(form.preview) || 0,
     };
 
     try {
@@ -95,7 +81,7 @@ export function AdminCourseForm() {
           <p className={styles.kicker}>Admin</p>
           <h1>{isEditing ? "Editar curso" : "Novo curso"}</h1>
           <p className={styles.subtitle}>
-            Apenas mock local — os dados ficam no navegador.
+            Persistido no backend: apenas admins autenticados podem salvar.
           </p>
         </div>
         <Link className={styles.back} to="/admin/courses">
@@ -107,10 +93,10 @@ export function AdminCourseForm() {
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <label>
-          Título
+          Nome
           <input
-            name="title"
-            value={form.title}
+            name="name"
+            value={form.name}
             onChange={handleChange}
             required
           />
@@ -119,38 +105,21 @@ export function AdminCourseForm() {
         <div className={styles.grid}>
           <label>
             Categoria
-            <select
+            <input
               name="category"
               value={form.category}
               onChange={handleChange}
+              list="category-options"
+              placeholder="tech / data / design..."
               required
-            >
+            />
+            <datalist id="category-options">
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.label}
                 </option>
               ))}
-            </select>
-          </label>
-
-          <label>
-            Duração
-            <input
-              name="duration"
-              value={form.duration}
-              onChange={handleChange}
-              placeholder="Ex: 20h"
-            />
-          </label>
-
-          <label>
-            Nível
-            <input
-              name="level"
-              value={form.level}
-              onChange={handleChange}
-              placeholder="Iniciante/Intermediário/Avançado"
-            />
+            </datalist>
           </label>
 
           <label>
@@ -165,12 +134,12 @@ export function AdminCourseForm() {
           </label>
 
           <label>
-            Nota
+            Preview / Nota
             <input
-              name="rating"
+              name="preview"
               type="number"
               step="0.1"
-              value={form.rating}
+              value={form.preview}
               onChange={handleChange}
             />
           </label>
@@ -183,26 +152,6 @@ export function AdminCourseForm() {
             value={form.description}
             onChange={handleChange}
             rows={4}
-          />
-        </label>
-
-        <label>
-          Destaques (1 por linha)
-          <textarea
-            name="highlights"
-            value={form.highlights}
-            onChange={handleChange}
-            rows={4}
-          />
-        </label>
-
-        <label>
-          Conteúdo/Syllabus (1 por linha)
-          <textarea
-            name="syllabus"
-            value={form.syllabus}
-            onChange={handleChange}
-            rows={5}
           />
         </label>
 

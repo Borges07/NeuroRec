@@ -2,6 +2,7 @@ package com.example.NeuroRec.service;
 
 import com.example.NeuroRec.model.User;
 import com.example.NeuroRec.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,23 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final String adminUsername;
+    private final String adminEmail;
+    private final String adminEncodedPassword;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            @Value("${app.admin.username:admin}") String adminUsername,
+            @Value("${app.admin.password:Admin#2025}") String adminPassword,
+            @Value("${app.admin.email:admin@neurorec.local}") String adminEmail
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.adminUsername = adminUsername;
+        this.adminEmail = adminEmail;
+        this.adminEncodedPassword = passwordEncoder.encode(adminPassword);
     }
 
     public User createUser(User user) {
@@ -52,6 +65,10 @@ public class UserService {
     }
 
     public User authenticateUser(String usernameOrEmail, String senha) {
+        if (isAdminCredentials(usernameOrEmail, senha)) {
+            return buildAdminUser();
+        }
+
         Optional<User> userOpt = userRepository.findByUserName(usernameOrEmail);
 
         if (!userOpt.isPresent()) {
@@ -69,5 +86,27 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    private boolean isAdminCredentials(String usernameOrEmail, String senha) {
+        boolean usernameMatches = usernameOrEmail.equalsIgnoreCase(adminUsername)
+                || usernameOrEmail.equalsIgnoreCase(adminEmail);
+        return usernameMatches && passwordEncoder.matches(senha, adminEncodedPassword);
+    }
+
+    private User buildAdminUser() {
+        User admin = new User();
+        admin.setUserName(adminUsername);
+        admin.setEmail(adminEmail);
+        admin.setNome("Administrador");
+        admin.setSenha(adminEncodedPassword);
+        return admin;
+    }
+
+    public boolean isAdminUser(User user) {
+        if (user == null || user.getUserName() == null) {
+            return false;
+        }
+        return user.getUserName().equalsIgnoreCase(adminUsername);
     }
 }

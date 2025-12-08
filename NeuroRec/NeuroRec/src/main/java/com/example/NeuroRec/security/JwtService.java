@@ -14,7 +14,14 @@ public class JwtService {
     private static final String SECRET_KEY = "superchavesecretaparajwtcommaisde32caracteres!";
 
     public String generateToken(String username) {
+        return generateToken(username, null);
+    }
+
+    public String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();
+        if (role != null && !role.isBlank()) {
+            claims.put("role", role);
+        }
         return createToken(claims, username);
     }
 

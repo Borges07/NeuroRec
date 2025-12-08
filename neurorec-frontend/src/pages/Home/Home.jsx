@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { categories, courses } from "../../data/courses.js";
+import { categories as seedCategories } from "../../data/courses.js";
 import { useCart } from "../../hooks/useCart.js";
+import { fetchCourses } from "../../services/courseService.js";
 import styles from "./Home.module.css";
 
 const allCategoryId = "all";
@@ -10,6 +11,28 @@ export function Home() {
   const { addToCart, cart } = useCart();
   const [activeCategory, setActiveCategory] = useState(allCategoryId);
   const [searchTerm, setSearchTerm] = useState("");
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const data = await fetchCourses();
+        setCourses(data);
+      } catch (err) {
+        console.error("Erro ao carregar cursos do backend:", err);
+        setError("Não foi possível carregar do servidor.");
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
 
   const filteredCourses = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -41,6 +64,16 @@ export function Home() {
       return matchCategory && haystack.includes(needle);
     });
   }, [activeCategory, searchTerm]);
+
+  const categories = useMemo(() => {
+    const dynamic = Array.from(
+      new Set(courses.map((course) => course.category).filter(Boolean))
+    ).map((id) => ({
+      id,
+      label: seedCategories.find((item) => item.id === id)?.label ?? id,
+    }));
+    return [{ id: allCategoryId, label: "Todos" }, ...dynamic];
+  }, [courses]);
 
   const getCategoryLabel = (id) =>
     categories.find((item) => item.id === id)?.label ?? id;
@@ -132,8 +165,12 @@ export function Home() {
           })}
         </div>
 
+        {error && <div className={styles.error}>{error}</div>}
+
         <div className={styles.grid}>
-          {filteredCourses.length === 0 ? (
+          {loading ? (
+            <div className={styles.empty}>Carregando catálogo...</div>
+          ) : filteredCourses.length === 0 ? (
             <div className={styles.empty}>
               <h3>Nenhum curso encontrado</h3>
               <p>
